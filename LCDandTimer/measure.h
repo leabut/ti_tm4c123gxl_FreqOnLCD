@@ -1,3 +1,7 @@
+/**
+ * @author leabut
+ */
+
 //default includes
 #include <stdint.h>
 #include <stdbool.h>
