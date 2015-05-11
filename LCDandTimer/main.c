@@ -1,6 +1,9 @@
 /**
  * @author TI Launchpad Workshop
  * @editor leabut
+ *
+ * For further information for that class
+ * see int main(void)
  */
 
 #include <stdint.h>
@@ -11,18 +14,34 @@
 #include "driverlib/sysctl.h"
 #include "grlib/grlib.h"
 
+//classes for Kentec QVGA LCD Display
 #include "Kentec320x240x16_ssd2119_8bit.h"
+//calculating class for measuring the external frequency
 #include "measure.h"
 
+//bootloader image from TI Workshop
 extern const uint8_t g_pui8Image[];
+//display grlib base
 tContext sContext;
+//clearing rectangle
 tRectangle sRect;
 
+//freqString from measure.h
 extern char freqString[8];
 
+//initializing the timer, interrupts and GPIO
 extern void initTimerAndGPIO();
+//measuring method for external frequency
 extern void calc();
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * This method is writing a rectangle sRect over
+ * the whole LCD so it appears as the LCD would
+ * be cleaned
+ */
 void ClrScreen() {
 	sRect.i16XMin = 0;
 	sRect.i16YMin = 0;
@@ -33,21 +52,48 @@ void ClrScreen() {
 	GrFlush(&sContext);
 }
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * Is waiting for system cycles in milliseconds
+ * 1 second = 1000 milliseconds
+ */
 void delayMS(int ms) {
 	SysCtlDelay((SysCtlClockGet() / (3 * 1000)) * ms);
 }
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * Initializes the Kentec QVGA LCD
+ * Sets the GPIO and sContext from grlib
+ */
 void initLCD() {
 	Kentec320x240x16_SSD2119Init();
 	GrContextInit(&sContext, &g_sKentec320x240x16_SSD2119);
 	ClrScreen();
 }
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * Draws the boot image from TI Workshop onto LCD
+ */
 void drawIMGLCD() {
 	GrImageDraw(&sContext, g_pui8Image, 0, 0);
 	GrFlush(&sContext);
 }
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * Draws bootloader test strings to the LCD
+ *
+ */
 void drawOntoLCD() {
 	sRect.i16XMin = 1;
 	sRect.i16YMin = 1;
@@ -64,6 +110,13 @@ void drawOntoLCD() {
 	GrFlush(&sContext);
 }
 
+/**
+ * @author TI Launchpad Workshop
+ * @editor leabut
+ *
+ * Is drawing continously in while(1) loop onto LCD
+ * Is refreshing the freqString and LCD in general
+ */
 void drawOntoLCD2() {
 	sRect.i16XMin = 1;
 	sRect.i16YMin = 1;
@@ -79,8 +132,21 @@ void drawOntoLCD2() {
 	GrStringDraw(&sContext, "Output in Hz:", -1, 80, 32, 0);
 }
 
+/**
+ * @author leabut
+ *
+ * Is setting the system clock as well as
+ * controlling the whole program
+ * It sets the GPIO ports of Kentec QVGA LCD Display
+ * as well as the interrupts, timers and GPIO ports of
+ * measure.h
+ *
+ * For further information about calculating external frequencies
+ * goto measure.h
+ */
 int main(void) {
 
+	//setting system clock
 	SysCtlClockSet(
 			SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN
 					| SYSCTL_XTAL_8MHZ);

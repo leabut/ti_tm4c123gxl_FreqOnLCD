@@ -1,15 +1,21 @@
 /**
  * @author leabut
+ *
+ * This class is measuring external frequencies on port PB0
+ * using a timer to count the square signal edges as well
+ * as calculating the corresbonding frequencie
  */
 
 //default includes
 #include <stdint.h>
 #include <stdbool.h>
 
+//gpio includes
 #include "inc/hw_gpio.h"
 #include "inc/hw_types.h"
 #include "inc/hw_memmap.h"
 
+//sysctl includes
 #include "driverlib/sysctl.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/gpio.h"
@@ -43,6 +49,9 @@ void calc();
 //*****************************************************************************
 //
 // The interrupt handler for the first timer interrupt.
+//
+// This interrupt handler is resetting itself TIMER0, TIMER_A and
+// the counter TIMER2, TIMER_A
 //
 //*****************************************************************************
 void Timer0IntHandler(void) {	//
